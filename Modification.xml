@@ -357,7 +357,7 @@ function ImageSettings($return_config = false)
 						<dd>
 						', $txt['membergroups_images_mod'], '
 						<input type="text" name="image" value="', $context['group']['image'], '" />
-						<img src="', $settings['images_url'], '/group_images/', $context['group']['image'] == '' ? 'blank.gif' : $context['group']['image'], '" alt="*" />
+						<img src="', $settings['images_url'], '/', $context['group']['image'] == '' ? 'blank.gif' : 'group_images/' . $context['group']['image'], '" alt="*" />
 						</dd>';
 ]]></add>
 		</operation>
