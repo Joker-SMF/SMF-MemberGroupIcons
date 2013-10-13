@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+	<id>sid2varun:member_group_icons</id>
+	<name>Member Group Icons</name>
+	<version>1.24</version>
+	<type>modification</type>
+
+	<install for="2.0 - 2.0.99">
+		<readme type="file" parsebbc="true">readme.txt</readme>
+		<database>DB.php</database>
+		<create-dir name="group_images" destination="$imagesdir" />
+		<modification format="xml" type="file">Modification.xml</modification>
+		<redirect url="?action=admin;area=modsettings;sa=images" />
+	</install>
+
+
+	<uninstall for="2.0 - 2.0.99">
+		<readme type="file" parsebbc="true">uninstall_readme.txt</readme>
+		<modification type="file" reverse="true">Modification.xml</modification>
+		<redirect url="$scripturl?action=admin;area=packages;sa=browse" timeout="1000" />
+	</uninstall>
+
+</package-info>
