@@ -99,46 +99,51 @@
 		</operation>
 		<operation>
 			<search position="before"><![CDATA['stars' => 'string', 'online_color' => 'string', 'group_type' => 'int',]]></search>
-			<add><![CDATA['image' => 'string',]]></add>
+			<add><![CDATA[ 'image' => 'string', 'show_bold' => 'int',]]></add>
 		</operation>
 		<operation>
 			<search position="replace"><![CDATA['1#star.gif', '', $_POST['group_type'],]]></search>
-			<add><![CDATA['1#star.gif', '', $_POST['group_type'], '',]]></add>
+			<add><![CDATA['1#star.gif', '', $_POST['group_type'], '', 0]]></add>
 		</operation>
 		<operation>
 			<search position="replace"><![CDATA[stars = {string:stars}
 					WHERE id_group = {int:current_group}',]]></search>
 			<add><![CDATA[stars = {string:stars},
 						image = {string:image}
+                        show_bold = {int:show_bold}
 					WHERE id_group = {int:current_group}',]]></add>
 		</operation>
 		<operation>
 			<search position="before"><![CDATA['stars' => $group_info['stars'],]]></search>
 			<add><![CDATA[
-						'image' => $group_info['image'],]]></add>
+						'image' => $group_info['image'],
+                        'show_bold' => $group_info['show_bold'],]]></add>
 		</operation>
 		<operation>
 			<search position="before"><![CDATA[// Set variables to their proper value.]]></search>
 			<add><![CDATA[
-		$_POST['image'] = isset($_POST['image']) ? $_POST['image'] : '';]]></add>
+		$_POST['image'] = isset($_POST['image']) ? $_POST['image'] : '';
+        $_POST['show_bold'] = isset($_POST['show_bold']) && !empty($_POST['show_bold']) ? 1 : 0;]]></add>
 		</operation>
 		<operation>
 			<search position="before"><![CDATA[SET group_name = {string:group_name}, online_color = {string:online_color},]]></search>
-			<add><![CDATA[ image = {string:image},]]></add>
+			<add><![CDATA[ image = {string:image}, show_bold = {string:show_bold},]]></add>
 		</operation>
 		<operation>
 			<search position="before"><![CDATA['stars' => $_POST['stars'],]]></search>
 			<add><![CDATA[
-				'image' => $_POST['image'],]]></add>
+				'image' => $_POST['image'],
+                'image' => $_POST['show_bold'],]]></add>
 		</operation>
 		<operation>
 			<search position="before"><![CDATA[SELECT group_name, description, min_posts, online_color, max_messages, stars, group_type, hidden, id_parent]]></search>
-			<add><![CDATA[, image]]></add>
+			<add><![CDATA[, image, show_bold]]></add>
 		</operation>
 		<operation>
 			<search position="before"><![CDATA['star_image' => isset($row['stars'][1]) ? $row['stars'][1] : '',]]></search>
 			<add><![CDATA[
-		'image' => isset($row['image']) ? $row['image'] : '',]]></add>
+		'image' => isset($row['image']) ? $row['image'] : '',
+        'show_bold' => isset($row['show_bold']) ? $row['show_bold'] : 0,]]></add>
 		</operation>
 	</file>
 	
@@ -146,12 +151,13 @@
 	<file name="$sourcedir/Subs-Membergroups.php">
 		<operation>
 			<search position="before"><![CDATA[SELECT id_group, group_name, min_posts, online_color, stars, 0 AS num_members]]></search>
-			<add><![CDATA[, image]]></add>
+			<add><![CDATA[, image, show_bold]]></add>
 		</operation>
 		<operation>
 			<search position="before"><![CDATA['num_members' => $row['num_members'],]]></search>
 			<add><![CDATA[
-			'image' => $row['image'],]]></add>
+			'image' => $row['image'],
+            'show_bold' => $row['show_bold'],]]></add>
 		</operation>
 	</file>
 	
@@ -358,6 +364,12 @@ function ImageSettings($return_config = false)
 						', $txt['membergroups_images_mod'], '
 						<input type="text" name="image" value="', $context['group']['image'], '" />
 						<img src="', $settings['images_url'], '/', $context['group']['image'] == '' ? 'blank.gif' : 'group_images/' . $context['group']['image'], '" alt="*" />
+						</dd>
+                        <dt>
+						<label for="image_input"><strong>Show username in bold:</strong></label>
+						</dt>
+						<dd>
+						<input type="checkbox" name="show_bold" value="', $context['group']['show_bold'],'" ', isset($context['group']['show_bold']) && !empty($context['group']['show_bold']) ? ' checked="checked"' : '', ' class="input_check" />
 						</dd>';
 ]]></add>
 		</operation>
