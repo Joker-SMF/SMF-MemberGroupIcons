@@ -274,11 +274,11 @@ function ImageSettings($return_config = false)
 		</operation>
 		<operation>
 			<search position="before"><![CDATA[pg.online_color AS post_group_color, IFNULL(pg.group_name, {string:blank_string}) AS post_group, mem.is_activated, mem.warning,]]></search>
-			<add><![CDATA[ mg.image, mg.show_bold]]></add>
+			<add><![CDATA[ mg.image, mg.show_bold,]]></add>
 		</operation>
 		<operation>
 			<search position="before"><![CDATA[pg.online_color AS post_group_color, IFNULL(pg.group_name, {string:blank_string}) AS post_group, mem.ignore_boards, mem.warning,]]></search>
-			<add><![CDATA[ mg.image,]]></add>
+			<add><![CDATA[ mg.image, mg.show_bold,]]></add>
 		</operation>
 		<operation>
 			<search position="replace"><![CDATA[				SELECT group_name AS member_group, online_color AS member_group_color, stars]]></search>
@@ -330,7 +330,8 @@ function ImageSettings($return_config = false)
 			<search position="before"><![CDATA['id' => $row_board['id_member'],
 ]]></search>
 			<add><![CDATA[				'group_image' => !empty($row_board['member_id_group']) ? $row_board['image'] : (!empty($row['member_id_post_group']) ?  $row['image'] : ''),
-				'bold_username' => !empty($row_board['show_bold']) ? true : false,]]></add>
+				'bold_username_start' => !empty($row_board['show_bold']) ? '<strong>' : false,
+				'bold_username_end' => !empty($row_board['show_bold']) ? '</strong>' : false,]]></add>
 		</operation>
 	</file>
 	
@@ -404,9 +405,26 @@ function ImageSettings($return_config = false)
 
 	<file name="$themedir/index.template.php">
 		<operation>
-			<search position="replace"><![CDATA[					<li class="greeting">', $txt['hello_member_ndt'], ' <span>', $context['user']['name'], '</span></li>
-]]></search>
-			<add><![CDATA[					<li class="greeting">', $txt['hello_member_ndt'], ' <span>', (!empty($context['user']['group_image']) && empty($modSettings['disable_image_on_left']) && empty($modSettings['disable_on_index']) ? '<img src="' . $settings['images_url'] . '/group_images/' .  $context['user']['group_image'] . '" alt="" />' : '') , $context['user']['name'], (!empty($context['user']['group_image']) && empty($modSettings['disable_image_on_right']) && empty($modSettings['disable_on_index']) ? '<img src="' . $settings['images_url'] . '/group_images/' .  $context['user']['group_image'] . '" alt="" />' : ''), '</span></li>
+			<search position="replace"><![CDATA[
+					<li class="greeting">', $txt['hello_member_ndt'], ' <span>', $context['user']['name'], '</span></li>]]></search>
+			<add><![CDATA[';
+
+			echo '
+					<li class="greeting">', $txt['hello_member_ndt'], ' <span>';
+
+		if(!empty($context['user']['group_image']) && empty($modSettings['disable_image_on_left']) && empty($modSettings['disable_on_index']))
+			echo '
+						<img src="' . $settings['images_url'] . '/group_images/' .  $context['user']['group_image'] . '" alt="" />';
+
+			echo 
+				(!empty($context['user']['bold_username']) ? '<strong>' : '' ) . $context['user']['name'] . (!empty($context['user']['bold_username']) ? '</strong>' : '' );
+			
+		if(!empty($context['user']['group_image']) && empty($modSettings['disable_image_on_right']) && empty($modSettings['disable_on_index']))
+			echo '
+						<img src="' . $settings['images_url'] . '/group_images/' .  $context['user']['group_image'] . '" alt="" />';
+
+		echo '
+					</span></li>
 ]]></add>
 		</operation>
 	</file>
@@ -415,17 +433,11 @@ function ImageSettings($return_config = false)
 	<file name="$themedir/BoardIndex.template.php">
 		<operation>
 			<search position="replace"><![CDATA[<p><strong>', $txt['last_post'], '</strong>  ', $txt['by'], ' ', $board['last_post']['member']['link'] , '<br />]]></search>
-			<add><![CDATA[<p><strong>', $txt['last_post'], '</strong>  ', $txt['by'], ' ', (!empty($board['last_post']['member']['group_image']) && empty($modSettings['disable_image_on_left']) && empty($modSettings['disable_on_last_post_bi']) ?  '<img src="' . $settings['images_url'] . '/group_images/' . $board['last_post']['member']['group_image'] . '" alt="" />' : ''), $board['last_post']['member']['link'] , (!empty($board['last_post']['member']['group_image']) && empty($modSettings['disable_image_on_right']) && empty($modSettings['disable_on_last_post_bi']) ?  '<img src="' . $settings['images_url'] . '/group_images/' . $board['last_post']['member']['group_image'] . '" alt="" />' : ''), '<br />]]></add>
+			<add><![CDATA[<p><strong>', $txt['last_post'], '</strong>  ', $txt['by'], ' ', (!empty($board['last_post']['member']['group_image']) && empty($modSettings['disable_image_on_left']) && empty($modSettings['disable_on_last_post_bi']) ?  '<img src="' . $settings['images_url'] . '/group_images/' . $board['last_post']['member']['group_image'] . '" alt="" />' : ''), $board['last_post']['member']['bold_username_start'], $board['last_post']['member']['link'], $board['last_post']['member']['bold_username_end'], (!empty($board['last_post']['member']['group_image']) && empty($modSettings['disable_image_on_right']) && empty($modSettings['disable_on_last_post_bi']) ?  '<img src="' . $settings['images_url'] . '/group_images/' . $board['last_post']['member']['group_image'] . '" alt="" />' : ''), '<br />]]></add>
 		</operation>		
 		<operation>
 			<search position="replace"><![CDATA[<td class="lastpost">';]]></search>
 			<add><![CDATA[<td class="lastpost something">';]]></add>
-		</operation>
-		<operation>
-			<search position="replace"><![CDATA[				', $context['common_stats']['total_posts'], ' ', $txt['posts_made'], ' ', $txt['in'], ' ', $context['common_stats']['total_topics'], ' ', $txt['topics'], ' ', $txt['by'], ' ', $context['common_stats']['total_members'], ' ', $txt['members'], '. ', !empty($settings['show_latest_member']) ? $txt['latest_member'] . ': <strong> ' . $context['common_stats']['latest_member']['link'] . '</strong>' : '', '<br />
-]]></search>
-			<add><![CDATA[				', $context['common_stats']['total_posts'], ' ', $txt['posts_made'], ' ', $txt['in'], ' ', $context['common_stats']['total_topics'], ' ', $txt['topics'], ' ', $txt['by'], ' ', $context['common_stats']['total_members'], ' ', $txt['members'], '. ', !empty($settings['show_latest_member']) ? $txt['latest_member'] . ': <strong>' . (!empty($board['last_post']['member']['group_image']) && empty($modSettings['disable_image_on_left']) && empty($modSettings['disable_on_forum_stats_bi']) ?  '<img src="' . $settings['images_url'] . '/group_images/' .  $context['user']['group_image'] . '" alt="" />' : '') . $context['common_stats']['latest_member']['link'] . (!empty($board['last_post']['member']['group_image']) && empty($modSettings['disable_image_on_right']) && empty($modSettings['disable_on_forum_stats_bi']) ?  '<img src="' . $settings['images_url'] . '/group_images/' .  $context['user']['group_image'] . '" alt="" />' : '') . '</strong>' : '', '<br />
-]]></add>
 		</operation>
 	</file>	
 	
