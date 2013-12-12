@@ -339,9 +339,8 @@ function ImageSettings($return_config = false)
 		<operation>
 			<search position="before"><![CDATA[				mf.poster_name AS first_member_name, mf.id_member AS first_id_member,
 ]]></search>
-			<add><![CDATA[				memf.id_group AS first_id_group, memf.id_post_group AS first_id_post_group, meml.id_group AS last_id_group, meml.id_post_group AS last_id_post_group,
-				mgf.image AS first_member_image, mgl.image AS last_member_image,
-				]]></add>
+			<add><![CDATA[memf.id_group AS first_id_group, memf.id_post_group AS first_id_post_group, meml.id_group AS last_id_group, meml.id_post_group AS last_id_post_group, mgf.image AS first_member_image, mgl.image AS last_member_image, mgf.show_bold AS first_member_show_bold, mgl.show_bold AS last_member_show_bold,
+]]></add>
 		</operation>
 		<operation>
 			<search position="before"><![CDATA[				LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = {int:current_board} AND lmr.id_member = {int:current_member})'). '
@@ -351,14 +350,16 @@ function ImageSettings($return_config = false)
 				]]></add>
 		</operation>
 		<operation>
-			<search position="before"><![CDATA['id' => $row['first_id_member'],]]></search>
-			<add><![CDATA[						'group_image' => !empty($row['first_id_group']) ? $row['first_member_image'] : (!empty($row['first_id_post_group']) ?  $row['first_member_image'] : ''),
-]]></add>
+			<search position="before"><![CDATA['id' => $row['first_id_member'],
+]]></search>
+			<add><![CDATA[						'group_image' => !empty($row['first_id_group']) ? $row['first_member_image'] : (!empty($row['first_id_post_group']) ? $row['first_member_image'] : ''),
+						'bold_username' => !empty($row['first_id_group']) ? $row['first_member_show_bold'] : (!empty($row['first_id_post_group']) ? true : false),]]></add>
 		</operation>
 		<operation>
-			<search position="before"><![CDATA['id' => $row['last_id_member'],]]></search>
-			<add><![CDATA[						'group_image' => !empty($row['last_id_group']) ? $row['last_member_image'] : (!empty($row['last_id_post_group']) ?  $row['last_member_image'] : ''),
-]]></add>
+			<search position="before"><![CDATA['id' => $row['last_id_member'],
+]]></search>
+			<add><![CDATA['group_image' => !empty($row['last_id_group']) ? $row['last_member_image'] : (!empty($row['last_id_post_group']) ?  $row['last_member_image'] : ''),
+						'bold_username' => !empty($row['last_id_group']) ? $row['last_member_show_bold'] : (!empty($row['last_id_post_group']) ? true : false),]]></add>
 		</operation>
 	</file>
 	
