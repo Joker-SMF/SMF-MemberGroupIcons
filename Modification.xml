@@ -168,11 +168,28 @@
 		</operation>
 		<operation>
 			<search position="before"><![CDATA[mg.online_color, mg.id_group, mg.group_name]]></search>
-			<add><![CDATA[, mg.image]]></add>
+			<add><![CDATA[, mg.image, mg.show_bold]]></add>
 		</operation>
 		<operation>
-			<search position="replace"><![CDATA[$link = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '" style="color: ' . $row['online_color'] . ';">' . $row['real_name'] . '</a>';]]></search>
-			<add><![CDATA[$link = ((!empty($row['image']) && empty($modSettings['disable_image_on_left']) && empty($modSettings['disable_on_online_list_bi'])) ? '<img src="' . $settings['images_url'] . '/group_images/' . $row['image'] . '" alt="" />' : '') .  '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '" style="color: ' . $row['online_color'] . ';">' . $row['real_name'] . '</a>' . ((!empty($row['image'])&& empty($modSettings['disable_image_on_right']) && empty($modSettings['disable_on_online_list_bi'])) ? '<img src="' . $settings['images_url'] . '/group_images/' . $row['image'] . '" alt="" />' : '');]]></add>
+			<search position="replace"><![CDATA[if (!empty($row['online_color']))
+			$link = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '" style="color: ' . $row['online_color'] . ';">' . $row['real_name'] . '</a>';
+		else
+			$link = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';]]></search>
+			<add><![CDATA[if (!empty($row['online_color'])) {
+			$link = '';
+			$link .= ((!empty($row['image']) && empty($modSettings['disable_image_on_left']) && empty($modSettings['disable_on_online_list_bi'])) ? '<img src="' . $settings['images_url'] . '/group_images/' . $row['image'] . '" alt="" />' : '');
+			$link .= !empty($row['show_bold']) ? '<strong>' : '';
+			$link .= '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '" style="color: ' . $row['online_color'] . ';">' . $row['real_name'] . '</a>';
+			$link .= !empty($row['show_bold']) ? '</strong>' : '';
+			$link .= ((!empty($row['image'])&& empty($modSettings['disable_image_on_right']) && empty($modSettings['disable_on_online_list_bi'])) ? '<img src="' . $settings['images_url'] . '/group_images/' . $row['image'] . '" alt="" />' : '');
+		} else {
+			$link = '';
+			$link .= ((!empty($row['image']) && empty($modSettings['disable_image_on_left']) && empty($modSettings['disable_on_online_list_bi'])) ? '<img src="' . $settings['images_url'] . '/group_images/' . $row['image'] . '" alt="" />' : '');
+			$link .= !empty($row['show_bold']) ? '<strong>' : '';
+			$link .= '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
+			$link .= !empty($row['show_bold']) ? '</strong>' : '';
+			$link .= ((!empty($row['image'])&& empty($modSettings['disable_image_on_right']) && empty($modSettings['disable_on_online_list_bi'])) ? '<img src="' . $settings['images_url'] . '/group_images/' . $row['image'] . '" alt="" />' : '');
+		}]]></add>
 		</operation>
 	</file>
 
@@ -242,7 +259,7 @@ function ImageSettings($return_config = false)
 				FROM {db_prefix}members AS mem
 					LEFT JOIN {db_prefix}attachments AS a ON (a.id_member = {int:id_member})
 				WHERE mem.id_member = {int:id_member}]]></search>
-			<add><![CDATA[				SELECT mem.*, IFNULL(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type, mg.image
+			<add><![CDATA[				SELECT mem.*, IFNULL(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type, mg.image, mg.show_bold
 				FROM {db_prefix}members AS mem
 					LEFT JOIN {db_prefix}attachments AS a ON (a.id_member = {int:id_member})
 					LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = mem.id_group)
@@ -252,11 +269,12 @@ function ImageSettings($return_config = false)
 			<search position="before"><![CDATA[		'permissions' => array(),
 ]]></search>
 			<add><![CDATA[		'group_image' => !empty($user_settings['id_group']) && !empty($user_settings['image']) ? $user_settings['image'] : (!empty($user_settings['id_post_group']) && !empty($user_settings['image']) ?  $user_settings['image'] : ''),
+		'bold_username' => !empty($user_settings['show_bold']) ? true : false,
 ]]></add>
 		</operation>
 		<operation>
 			<search position="before"><![CDATA[pg.online_color AS post_group_color, IFNULL(pg.group_name, {string:blank_string}) AS post_group, mem.is_activated, mem.warning,]]></search>
-			<add><![CDATA[ mg.image,]]></add>
+			<add><![CDATA[ mg.image, mg.show_bold]]></add>
 		</operation>
 		<operation>
 			<search position="before"><![CDATA[pg.online_color AS post_group_color, IFNULL(pg.group_name, {string:blank_string}) AS post_group, mem.ignore_boards, mem.warning,]]></search>
@@ -264,18 +282,22 @@ function ImageSettings($return_config = false)
 		</operation>
 		<operation>
 			<search position="replace"><![CDATA[				SELECT group_name AS member_group, online_color AS member_group_color, stars]]></search>
-			<add><![CDATA[				SELECT group_name AS member_group, online_color AS member_group_color, stars, image]]></add>
+			<add><![CDATA[				SELECT group_name AS member_group, online_color AS member_group_color, stars, image, show_bold]]></add>
 		</operation>
 		<operation>
 			<search position="before"><![CDATA[			if (!empty($row['stars']))
-				$user_profile[$id]['stars'] = $row['stars'];]]></search>
-			<add><![CDATA[			if(!empty($row['image']))
-				$user_profile[$id]['image'] = $row['image'];]]></add>
+				$user_profile[$id]['stars'] = $row['stars'];
+]]></search>
+			<add><![CDATA[if(!empty($row['image']))
+				$user_profile[$id]['image'] = $row['image'];
+			if(!empty($row['show_bold']))
+				$user_profile[$id]['show_bold'] = $row['show_bold'];]]></add>
 		</operation>
 		<operation>
 			<search position="before"><![CDATA[		'group_color' => $profile['member_group_color'],
 ]]></search>
 			<add><![CDATA[		'group_image' => !empty($profile['id_group']) && !empty($profile['image']) ? '<img src="' . $settings['images_url'] . '/group_images/' . $profile['image'] . '" alt="" />' : (!empty($profile['id_post_group']) && !empty($profile['image']) ? '<img src="' . $settings['images_url'] . '/group_images/' . $profile['image'] . '" alt="" />' : ''),
+		'bold_username' => !empty($profile['show_bold']) ? true : false,
 ]]></add>
 		</operation>
 		<operation>
@@ -285,6 +307,7 @@ function ImageSettings($return_config = false)
 			<add><![CDATA[	if (!$context['user']['is_guest'])
 	{
 		$context['user']['group_image'] = $user_info['group_image'];
+        $context['user']['bold_username'] = $user_info['bold_username'];
 		$context['user']['name'] = $user_info['name'];
 	}
 ]]></add>
@@ -295,7 +318,7 @@ function ImageSettings($return_config = false)
 	<file name="$sourcedir/Subs-BoardIndex.php">
 		<operation>
 			<search position="before"><![CDATA[IFNULL(m.poster_time, 0) AS poster_time, IFNULL(mem.member_name, m.poster_name) AS poster_name,]]></search>
-			<add><![CDATA[ mem.id_group AS member_id_group, mem.id_post_group AS member_id_post_group, mg.image,]]></add>
+			<add><![CDATA[ mem.id_group AS member_id_group, mem.id_post_group AS member_id_post_group, mg.image, mg.show_bold,]]></add>
 		</operation>
 		<operation>
 			<search position="before"><![CDATA[			LEFT JOIN {db_prefix}members AS mods_mem ON (mods_mem.id_member = mods.id_member)
@@ -304,8 +327,10 @@ function ImageSettings($return_config = false)
 			]]></add>
 		</operation>
 		<operation>
-			<search position="before"><![CDATA['id' => $row_board['id_member'],]]></search>
-			<add><![CDATA[				'group_image' => !empty($row_board['member_id_group']) ? $row_board['image'] : (!empty($row['member_id_post_group']) ?  $row['image'] : ''),]]></add>
+			<search position="before"><![CDATA['id' => $row_board['id_member'],
+]]></search>
+			<add><![CDATA[				'group_image' => !empty($row_board['member_id_group']) ? $row_board['image'] : (!empty($row['member_id_post_group']) ?  $row['image'] : ''),
+				'bold_username' => !empty($row_board['show_bold']) ? true : false,]]></add>
 		</operation>
 	</file>
 	
