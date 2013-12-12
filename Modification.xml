@@ -269,7 +269,8 @@ function ImageSettings($return_config = false)
 			<search position="before"><![CDATA[		'permissions' => array(),
 ]]></search>
 			<add><![CDATA[		'group_image' => !empty($user_settings['id_group']) && !empty($user_settings['image']) ? $user_settings['image'] : (!empty($user_settings['id_post_group']) && !empty($user_settings['image']) ?  $user_settings['image'] : ''),
-		'bold_username' => !empty($user_settings['show_bold']) ? true : false,
+		'bold_username_start' => !empty($user_settings['id_group']) && !empty($user_settings['show_bold']) ? '<strong>' : (!empty($user_settings['id_post_group']) && !empty($user_settings['show_bold']) ?  '<strong>' : ''),
+		'bold_username_end' => !empty($user_settings['id_group']) && !empty($user_settings['show_bold']) ? '</strong>' : (!empty($user_settings['id_post_group']) && !empty($user_settings['show_bold']) ?  '</strong>' : ''),
 ]]></add>
 		</operation>
 		<operation>
@@ -297,7 +298,8 @@ function ImageSettings($return_config = false)
 			<search position="before"><![CDATA[		'group_color' => $profile['member_group_color'],
 ]]></search>
 			<add><![CDATA[		'group_image' => !empty($profile['id_group']) && !empty($profile['image']) ? '<img src="' . $settings['images_url'] . '/group_images/' . $profile['image'] . '" alt="" />' : (!empty($profile['id_post_group']) && !empty($profile['image']) ? '<img src="' . $settings['images_url'] . '/group_images/' . $profile['image'] . '" alt="" />' : ''),
-		'bold_username' => !empty($profile['show_bold']) ? true : false,
+		'bold_username_start' => !empty($profile['id_group']) && !empty($profile['show_bold']) ? '<strong>' : (!empty($profile['id_post_group']) && !empty($profile['show_bold']) ? '<strong>' : ''),
+		'bold_username_end' => !empty($profile['id_group']) && !empty($profile['show_bold']) ? '</strong>' : (!empty($profile['id_post_group']) && !empty($profile['show_bold']) ? '</strong>' : ''),
 ]]></add>
 		</operation>
 		<operation>
@@ -307,7 +309,8 @@ function ImageSettings($return_config = false)
 			<add><![CDATA[	if (!$context['user']['is_guest'])
 	{
 		$context['user']['group_image'] = $user_info['group_image'];
-        $context['user']['bold_username'] = $user_info['bold_username'];
+        $context['user']['bold_username_start'] = $user_info['bold_username_start'];
+		$context['user']['bold_username_end'] = $user_info['bold_username_end'];
 		$context['user']['name'] = $user_info['name'];
 	}
 ]]></add>
@@ -462,7 +465,7 @@ function ImageSettings($return_config = false)
 		<operation>
 			<search position="replace"><![CDATA[								', $message['member']['link'], '
 ]]></search>
-			<add><![CDATA[								', (!empty($message['member']['group_image']['image']) && empty($modSettings['disable_image_on_left']) && empty($modSettings['disable_in_posts']) ? $message['member']['group_image'] : ''), $message['member']['link'], (!empty($message['member']['group_image']['image']) && empty($modSettings['disable_image_on_right']) && empty($modSettings['disable_in_posts']) ? $message['member']['group_image'] : ''), '
+			<add><![CDATA[								', (!empty($message['member']['group_image']) && empty($modSettings['disable_image_on_left']) && empty($modSettings['disable_in_posts']) ? $message['member']['group_image'] : ''), $message['member']['bold_username_start'], $message['member']['link'], $message['member']['bold_username_end'], (!empty($message['member']['group_image']) && empty($modSettings['disable_image_on_right']) && empty($modSettings['disable_in_posts']) ? $message['member']['group_image'] : ''), '
 ]]></add>
 		</operation>
 	</file>
@@ -470,7 +473,7 @@ function ImageSettings($return_config = false)
 	<file name="$themedir/Profile.template.php">
 		<operation>
 			<search position="replace"><![CDATA[<div class="username"><h4>', $context['member']['name'],]]></search>
-			<add><![CDATA[<div class="username"><h4>', (!empty($context['member']['group_image']) && empty($modSettings['disable_image_on_left']) && empty($modSettings['disable_in_profile']) ? $context['member']['group_image'] : ''), $context['member']['name'], (!empty($context['member']['group_image']) && empty($modSettings['disable_image_on_right']) && empty($modSettings['disable_in_profile']) ? $context['member']['group_image'] : ''),]]></add>
+			<add><![CDATA[<div class="username"><h4>', (!empty($context['member']['group_image']) && empty($modSettings['disable_image_on_left']) && empty($modSettings['disable_in_profile']) ? $context['member']['group_image'] : ''), $context['member']['bold_username_start'], $context['member']['name'], $context['member']['bold_username_end'], (!empty($context['member']['group_image']) && empty($modSettings['disable_image_on_right']) && empty($modSettings['disable_in_profile']) ? $context['member']['group_image'] : ''),]]></add>
 		</operation>
 	</file>
 
@@ -482,7 +485,7 @@ function ImageSettings($return_config = false)
 			</h4>
 ]]></search>
 			<add><![CDATA[		echo '
-								', (!empty($message['member']['group_image']) && empty($modSettings['disable_image_on_left']) && empty($modSettings['disable_in_pm']) ? $message['member']['group_image'] : ''), $message['member']['link'], (!empty($message['member']['group_image']) && empty($modSettings['disable_image_on_right']) && empty($modSettings['disable_in_pm']) ? $message['member']['group_image'] : ''), '
+								', (!empty($message['member']['group_image']) && empty($modSettings['disable_image_on_left']) && empty($modSettings['disable_in_pm']) ? $message['member']['group_image'] : ''), $message['member']['bold_username_start'], $message['member']['link'], $message['member']['bold_username_end'], (!empty($message['member']['group_image']) && empty($modSettings['disable_image_on_right']) && empty($modSettings['disable_in_pm']) ? $message['member']['group_image'] : ''),
 			</h4>
 ]]></add>
 		</operation>
