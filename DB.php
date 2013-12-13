@@ -2,7 +2,7 @@
 
 /**
  * @package manifest file for Member Groups Icons
- * @version 1.24
+ * @version 1.3
  * @author Joker (http://www.simplemachines.org/community/index.php?action=profile;u=226111)
  * @copyright Copyright (c) 2012
  * @license http://www.mozilla.org/MPL/MPL-1.1.html
