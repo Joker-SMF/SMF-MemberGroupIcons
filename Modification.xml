@@ -133,7 +133,7 @@
 			<search position="before"><![CDATA['stars' => $_POST['stars'],]]></search>
 			<add><![CDATA[
 				'image' => $_POST['image'],
-                'image' => $_POST['show_bold'],]]></add>
+                'show_bold' => $_POST['show_bold'],]]></add>
 		</operation>
 		<operation>
 			<search position="before"><![CDATA[SELECT group_name, description, min_posts, online_color, max_messages, stars, group_type, hidden, id_parent]]></search>
@@ -401,7 +401,7 @@ function ImageSettings($return_config = false)
 						<label for="image_input"><strong>Show username in bold:</strong></label>
 						</dt>
 						<dd>
-						<input type="checkbox" name="show_bold" value="', $context['group']['show_bold'],'" ', isset($context['group']['show_bold']) && !empty($context['group']['show_bold']) ? ' checked="checked"' : '', ' class="input_check" />
+						<input type="checkbox" name="show_bold" ', isset($context['group']['show_bold']) && !empty($context['group']['show_bold']) ? ' checked="checked"' : '', ' class="input_check" />
 						</dd>';
 ]]></add>
 		</operation>
@@ -482,7 +482,7 @@ function ImageSettings($return_config = false)
 		</operation>
 		<operation>
 			<search position="replace"><![CDATA[<td class="windowbg lefttext">', $member['link'], '</td>]]></search>
-			<add><![CDATA[<td class="windowbg lefttext">', (!empty($member['group_image']) && empty($modSettings['disable_image_on_left']) && empty($modSettings['disable_on_memberlist']) ? $member['group_image'] : ''), $member['link'], (!empty($member['group_image']) && empty($modSettings['disable_image_on_right']) && empty($modSettings['disable_on_memberlist']) ? $member['group_image'] : ''), '</td>]]></add>
+			<add><![CDATA[<td class="windowbg lefttext">', (!empty($member['group_image']) && empty($modSettings['disable_image_on_left']) && empty($modSettings['disable_on_memberlist']) ? $member['group_image'] : ''), $member['bold_username_start'], $member['link'], $member['bold_username_end'], (!empty($member['group_image']) && empty($modSettings['disable_image_on_right']) && empty($modSettings['disable_on_memberlist']) ? $member['group_image'] : ''), '</td>]]></add>
 		</operation>
 	</file>
 	
@@ -498,7 +498,7 @@ function ImageSettings($return_config = false)
 			<search position="replace"><![CDATA[' . $member['name'] . '</a>', '
 								</span>';
 ]]></search>
-			<add><![CDATA[' . (!empty($member['group_image']) && empty($modSettings['disable_image_on_left']) && empty($modSettings['disable_on_online_list']) ? $member['group_image'] : '') . $member['name'] . (!empty($member['group_image']) && empty($modSettings['disable_image_on_right']) && empty($modSettings['disable_on_online_list']) ? $member['group_image'] : '') . '</a>', '
+			<add><![CDATA[' . (!empty($member['group_image']) && empty($modSettings['disable_image_on_left']) && empty($modSettings['disable_on_online_list']) ? $member['group_image'] : '') . $member['bold_username_start'] . $member['name'] . $member['bold_username_end'] . (!empty($member['group_image']) && empty($modSettings['disable_image_on_right']) && empty($modSettings['disable_on_online_list']) ? $member['group_image'] : '') . '</a>', '
 								</span>';
 ]]></add>
 		</operation>

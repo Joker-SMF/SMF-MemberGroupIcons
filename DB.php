@@ -45,14 +45,24 @@ if(!array_key_exists('db_add_column', $smcFunc))
 	db_extend('packages');
 
 $column = array(
+	array(
 		'name' => 'image',
 		'type' => 'varchar',
 		'null' => false,
 		'size' => '255',
 		'default' => '',
+	),
+	array(
+		'name' => 'show_bold',
+		'type' => 'tinyint',
+		'size' => 1,
+		'default' => '0',
+	)
 );
 
-$smcFunc['db_add_column']('{db_prefix}membergroups', $column);
+foreach ($column as $key => $value) {
+	$smcFunc['db_add_column']('{db_prefix}membergroups', $value);
+}
 
 if(!empty($ssi))
 	echo 'Database installation complete!';
