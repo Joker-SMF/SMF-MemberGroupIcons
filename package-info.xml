@@ -11,7 +11,7 @@
 		<database>DB.php</database>
 		<create-dir name="group_images" destination="$imagesdir" />
 		<modification format="xml" type="file">Modification.xml</modification>
-		<redirect url="?action=admin;area=modsettings;sa=images" />
+		<redirect url="?action=admin;area=modsettings;sa=images" timeout="2000" />
 	</install>
 
 
