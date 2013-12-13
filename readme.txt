@@ -28,14 +28,14 @@ Icons have to uploaded in default\images\group_images folder. Created a separate
 
 After adding image or icon in group_images folder go to,
 
-Administration Center » Membergroups » Edit Membergroups
+Administration Center Â» Membergroups Â» Edit Membergroups
 Click on modify button next to member group name
 - add the icon name in "Icon/Image filename" field.
 - Check mark 'Show username in bold' if you want to show the username of the specific group in bold
 
 
 To enable or disable different permissions regarding mod go to,
-Administration Center » Modification Settings » Member Group Icons
+Administration Center Â» Modification Settings Â» Member Group Icons
 
 
 [b]Note: [/b]
